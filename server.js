@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-//const { error } = require('console');
 
 const app = express();
 const MONGODB_URL = 'mongodb://localhost:27017/Marketplace'; //Connect to the db
