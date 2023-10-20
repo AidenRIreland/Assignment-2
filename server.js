@@ -16,11 +16,7 @@ mongoose.connect(MONGODB_URL,{
 app.get('/', (req, res) => {  
     res.json({ "message": "Welcome to Marketplace application." });
 });
-
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
-//api/products
+//api/products 
 app.get('/api/products', async(req, res) => {
     try {
         const products = await Product.find();
@@ -29,4 +25,55 @@ app.get('/api/products', async(req, res) => {
         console.error('Error fetching products:', error.message);
         res.status(500).json({ message: 'Error fetching products' });
       }
+});
+//api/products/:id
+app.get('/api/products/:_id', async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) return res.status(404).json({ message: 'Product not found' });
+      res.json(product);
+    } catch (error) {
+      console.error('Error fetching product by ID:', error.message);
+      res.status(500).json({ message: 'Error fetching product by ID' });
+    }
+  });
+  app.post('/api/products', async (req, res) => {
+    const product = new Product(req.body);
+    try {
+        const savedProduct = await product.save();
+        res.json(savedProduct);
+    } catch (error) {
+        console.error('Error creating product:', error.message);
+        res.status(500).json({ message: 'Error creating product' });
+    }
+});
+app.put('/api/products/:_id', async (req, res) => {
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(req.params._id, req.body, { new: true });
+        if (updatedProduct) {
+            res.json(updatedProduct);
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        console.error('Error updating product:', error.message);
+        res.status(500).json({ message: 'Error updating product' });
+    }
+});
+app.delete('/api/products/:_id', async (req, res) => {
+    try {
+        const deletedProduct = await Product.findByIdAndRemove(req.params._id);
+        if (deletedProduct) {
+            res.json({ message: 'Product deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error.message);
+        res.status(500).json({ message: 'Error deleting product' });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
