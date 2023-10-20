@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
+const Product = require('./productModel');
 const app = express();
 const MONGODB_URL = 'mongodb://localhost:27017/Marketplace'; //Connect to the db
 const PORT = 3000;
@@ -19,4 +19,14 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+});
+//api/products
+app.get('/api/products', async(req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+      } catch (error) {
+        console.error('Error fetching products:', error.message);
+        res.status(500).json({ message: 'Error fetching products' });
+      }
 });
